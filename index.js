@@ -3,10 +3,7 @@ const dotenv = require('dotenv').config();
 const Mealit = require('./Mealit');
 
 
-const DB = process.env.DATABASE.replace(
-  '<PASSWORD>',
-  process.env.DATABASE_PASSWORD
-);
+const DB =  process.env.DATABASE_PASSWORD;
 
 
 mongoose
@@ -20,7 +17,7 @@ mongoose
 
 
 // Set the port 
-const port = 4000 || process.env.PORT;
+const port = process.env.PORT;
 
 // Start the Express server
 Mealit.listen(port, () => {
