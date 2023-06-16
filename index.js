@@ -1,9 +1,9 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
-const dotenv = require('dotenv').config();
 const Mealit = require('./Mealit');
 
 
-const DB =  process.env.DATABASE_PASSWORD;
+const DB =  process.env.DATABASE;
 
 
 mongoose
