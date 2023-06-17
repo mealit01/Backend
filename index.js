@@ -4,7 +4,13 @@ const Mealit = require('./Mealit');
 const cors = require("cors");
 const DB =  process.env.DATABASE;
 
-Mealit.use(cors())
+//Mealit.use(cors());
+
+Mealit.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
 
 mongoose
   .connect(DB, {
