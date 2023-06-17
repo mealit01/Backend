@@ -23,7 +23,7 @@ mongoose
 
 
 // Set the port 
-const port = 4000 || process.env.PORT;
+const port = 3000 || process.env.PORT;
 
 // Start the Express server
 Mealit.listen(port, () => {
