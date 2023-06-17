@@ -5,16 +5,16 @@ const rateLimit = require('express-rate-limit');        // Rate limiter for limi
 const helmet = require('helmet');                       // Security middleware to set HTTP headers
 const mongoSanitize = require('express-mongo-sanitize'); // Middleware to protect against MongoDB query injection attacks
 const xss = require('xss-clean');                        // Middleware to sanitize user input from malicious XSS attacks
-const cors = require("cors");
 
 const morgan = require('morgan');                       // HTTP request logger middleware
 const AppError = require('./utils/appError');            // Custom error handling utility
 const globalErrorHandler = require('./controllers/errorController'); // Global error handling middleware
 const userRouter = require('./routes/userRoutes.js');       // User route handler
 const recipeRouter = require('./routes/recipeRoutes');   // Recipe route handler
+const cors = require("cors");
 const Mealit = express();                               // Create an Express application instance
 
-Mealit.use(cors());
+//Mealit.use(cors());
 
 Mealit.use(express.json());                             // Middleware to parse incoming requests with JSON payloads
 
