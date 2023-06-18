@@ -24,7 +24,7 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getName = catchAsync(async (req, res, next) => {
+exports.getInfo = catchAsync(async (req, res, next) => {
   const firstName = req.user.firstName, lastName = req.user.lastName, email = req.user.email;
   res.status(200).json({
     status: 'success',

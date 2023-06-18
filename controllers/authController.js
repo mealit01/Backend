@@ -35,6 +35,13 @@ const createSendToken = (user, status, res) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
+  const email = req.body.email;
+  const existed = await User.findOne({email}).select('+active');
+
+  if (existed && existed.active === false) {
+    await User.deleteOne({ email});
+  }
+
   const nwUser = await User.create({
     firstName: req.body.firstName,
     lastName: req.body.lastName,
@@ -45,7 +52,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     role: req.body.role,
   });
 
-  createSendToken(nwUser, 201, res);
+  createSendToken(nwUser, 201, res); 
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -63,11 +70,17 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
+exports.logout = catchAsync(async (req, res, next) => {
+  res.status(200).json({
+    message: 'Logged out successfully'
+  });
+});
+
 exports.protect = catchAsync(async (req, res, next) => {
   // getting token and check if it is exist
   let token;
   if (
-    req.headers.authorization &&
+    req.headers.authorization && 
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1];
