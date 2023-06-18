@@ -24,17 +24,14 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getUserById = catchAsync(async (req, res, next) => {
-  const user = await User.findById(req.params.id, { active: true });
-
-  if (!user) {
-    return next(new AppError('No user found with that ID', 404));
-  }
-
+exports.getName = catchAsync(async (req, res, next) => {
+  const firstName = req.user.firstName, lastName = req.user.lastName, email = req.user.email;
   res.status(200).json({
     status: 'success',
     data: {
-      user,
+      firstName,
+      lastName,
+      email
     },
   });
 });
