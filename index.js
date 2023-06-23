@@ -1,8 +1,10 @@
-require('dotenv').config();
+const dotenv = require('dotenv');
 const mongoose = require('mongoose');
-const Mealit = require('./Mealit');
-const DB =  process.env.DATABASE;
+dotenv.config({ path: './config.env' });
 
+const Mealit = require('./Mealit');
+
+const DB =  process.env.DATABASE;
 
 mongoose
   .connect(DB, {

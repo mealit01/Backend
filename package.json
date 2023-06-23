@@ -6,8 +6,8 @@
   "license": "ISC",
   "description": "",
   "scripts": {
-    "dev": "set NODE_ENV=develpoment && node index.js",
-    "start": "set NODE_ENV=production && node index.js",
+    "dev": "set NODE_ENV=develpoment && nodemon index.js",
+    "start": "set NODE_ENV=production && nodemon index.js",
     "debug": "nbd index.js"
   },
   "dependencies": {
