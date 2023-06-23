@@ -27,10 +27,18 @@ const createSendToken = (user, status, res) => {
   res.cookie('jwt', token, cookieOptions);
 
   user.password = undefined;
+  const userObj = {
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+  };
+
+  console.log(userObj.firstName);
 
   res.status(status).json({
     status: 'success',
     token,
+    userInfo: userObj
   });
 };
 
@@ -61,7 +69,7 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!email || !password)
     return next(new AppError(`Please provide your email and password!`, 400));
 
-  const user = await User.findOne({ email }).select('+password active');
+  const user = await User.findOne({ email }).select('+password active firstName lastName email');
 
   if (!user || !(await user.correctPassword(password, user.password)))
     return next(new AppError('incorrect email and password!', 401));
