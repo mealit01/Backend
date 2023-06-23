@@ -28,6 +28,7 @@ exports.getInfo = catchAsync(async (req, res, next) => {
   const firstName = req.user.firstName, lastName = req.user.lastName, email = req.user.email;
   res.status(200).json({
     status: 'success',
+    token: req.headers.authorization.split(' ')[1],
     data: {
       firstName,
       lastName,
