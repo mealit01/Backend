@@ -133,7 +133,7 @@ exports.restrictTo = (...roles) => {
 
 exports.forgetPass = catchAsync(async (req, res, next) => {
   // 1) Get user based on POSTed email
-  const user = await User.findOne({ email: req.body.email });
+  const user = await User.findOne({ email: req.user.email });
   if (!user) {
     return next(new AppError('There is no user with email address.', 404));
   }
@@ -147,6 +147,7 @@ exports.forgetPass = catchAsync(async (req, res, next) => {
     'host'
   )}/api/user/resetPassword/${resetToken}`;
 
+  console.log(resetURL);
   const message = `Your Mealit password can be reset by clicking the button below. if you did not request a new password, please ignore this email. your reset url ${resetURL}`;
 
   try {
