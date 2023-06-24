@@ -158,7 +158,7 @@ exports.forgetPass = catchAsync(async (req, res, next) => {
     res.status(200).json({
       status: 'success',
       message: 'Token sent to your email!',
-      user,
+      user: user.email,
       resetURL
     });
   } catch (err) {
