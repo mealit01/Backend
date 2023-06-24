@@ -137,6 +137,7 @@ exports.forgetPass = catchAsync(async (req, res, next) => {
   if (!user) {
     return next(new AppError('There is no user with email address.', 404));
   }
+
   // 2) Generate the random reset token
   const resetToken = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
@@ -146,6 +147,7 @@ exports.forgetPass = catchAsync(async (req, res, next) => {
     'host'
   )}/api/user/resetPassword/${resetToken}`;
 
+  console.log(resetURL);
   const message = `Your Mealit password can be reset by clicking the button below. if you did not request a new password, please ignore this email. your reset url ${resetURL}`;
 
   try {
@@ -158,8 +160,6 @@ exports.forgetPass = catchAsync(async (req, res, next) => {
     res.status(200).json({
       status: 'success',
       message: 'Token sent to your email!',
-      user: user.email,
-      resetURL
     });
   } catch (err) {
     user.passwordResetToken = undefined;
