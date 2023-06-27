@@ -65,7 +65,6 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-
 // pre('save', function (next)): This function sets the passwordChangeAt property to the current date and time if the user's password has been modified since it was last saved to the database.
 userSchema.pre('save', function (next) {
   if (!this.isModified('password') || this.isNew) return next();
@@ -78,8 +77,7 @@ userSchema.methods.correctPassword = async function (loginPass, userPassword) {
   return await bcrypt.compare(loginPass, userPassword);
 };
 
-
-// changedPasswordAfter: This method checks whether the user's password has been changed after a given timestamp. 
+// changedPasswordAfter: This method checks whether the user's password has been changed after a given timestamp.
 userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(
@@ -93,8 +91,7 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   return false;
 };
 
-
-// createPasswordResetToken : This method generates a random string using crypto and sets the passwordResetToken property to its hashed value. 
+// createPasswordResetToken : This method generates a random string using crypto and sets the passwordResetToken property to its hashed value.
 // It also sets the passwordResetExpiry property to 10 minutes from the current date and time. It returns the unhashed password reset token.
 userSchema.methods.createPasswordResetToken = function () {
   const resetToken = crypto.randomBytes(32).toString('hex');
@@ -105,7 +102,7 @@ userSchema.methods.createPasswordResetToken = function () {
     .digest('hex');
 
   // change it to minutes
-  this.passwordResetExpiry = Date.now() + 10 * 60 * 1000;
+  this.passwordResetExpiry = Date.now() + 60 * 1000;
 
   return resetToken;
 };
