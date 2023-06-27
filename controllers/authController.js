@@ -142,7 +142,6 @@ exports.forgetPass = catchAsync(async (req, res, next) => {
 
   // 2) Generate the random reset token
   const resetToken = user.createPasswordResetToken();
-  
 
   res.cookie('resetToken', resetToken, {
     expires: new Date(Date.now() + 10 * 60 * 1000),
@@ -152,7 +151,9 @@ exports.forgetPass = catchAsync(async (req, res, next) => {
   await user.save({ validateBeforeSave: false });
   console.log(user);
   // 3) Send it to user's email
-  const resetURL = `https://mealit01.github.io/website/#/set-new-password`;
+  const resetURL = `${req.protocol}://${req.get(
+    'host'
+  )}/api/user/resetPassword/${resetToken}`;
   const message = `Hello, ${user.firstName}!\nYour Mealit password can be reset by clicking the button below. if you did not request a new password, please ignore this email. your reset url ${resetURL}`;
 
   try {
@@ -178,7 +179,6 @@ exports.forgetPass = catchAsync(async (req, res, next) => {
     );
   }
 });
-
 
 exports.resetPass = catchAsync(async (req, res, next) => {
   console.log(req.params.token);
