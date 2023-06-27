@@ -2,7 +2,6 @@ const Recipes = require('../models/recipesModel');
 const APIFeatures = require('./../utils/apiFeatures');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
-const fs = require('fs');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -13,13 +12,11 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-/*
 exports.addRecipes = catchAsync(async (req, res) => {
-
   res.status(200).json({
     status: 'success',
   });
-});*/
+});
 
 exports.getAllRecipes = catchAsync(async (req, res, next) => {
   const features = new APIFeatures(Recipes.find(), req.query)
