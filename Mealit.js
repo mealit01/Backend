@@ -10,7 +10,12 @@ const morgan = require('morgan');                       // HTTP request logger m
 const AppError = require('./utils/appError');            // Custom error handling utility
 const globalErrorHandler = require('./controllers/errorController'); // Global error handling middleware
 const userRouter = require('./routes/userRoutes.js');       // User route handler
-//const recipeRouter = require('./routes/recipeRoutes');   // Recipe route handler
+const recipeRouter = require('./routes/recipeRoutes');   // Recipe route handler
+const pantryRouter = require('./routes/pantryRoutes');   // pantry route handler
+const shoppingListRouter = require('./routes/shoppingListRoutes');   // shoppingList route handler
+const searchRouter = require('./routes/searchRoutes');   // shoppingList route handler
+
+
 const cors = require("cors");
 const Mealit = express();                               // Create an Express application instance
 
@@ -58,7 +63,15 @@ Mealit.use((req, res, next) => {
 Mealit.use(`/api/user`, userRouter);
 
 // Route handler for recipe routes
-//Mealit.use(`/api/recipes`, recipeRouter);
+Mealit.use(`/api/recipes`, recipeRouter);
+
+// Route handler for pantry routes
+Mealit.use(`/api/pantry`, pantryRouter);
+
+// Route handler for shopping routes
+Mealit.use(`/api/shopping`, shoppingListRouter);
+
+Mealit.use(`/api/recipes/search`, searchRouter);
 
 // Middleware to handle 404 errors for all other routes
 Mealit.all('*', (req, res, next) => {
