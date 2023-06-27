@@ -1,5 +1,6 @@
 const Ingredients = require('../models/ingredientModel');
 const catchAsync = require('../utils/catchAsync');
+const APIFeatures = require('./../utils/apiFeatures');
 const AppError = require('../utils/appError');
 
 const filterObj = (obj, ...allowedFields) => {
@@ -12,33 +13,41 @@ const filterObj = (obj, ...allowedFields) => {
 };
 
 exports.addIngredient = catchAsync(async (req, res) => {
-    const nwIngredient = await Ingredients.create({
-      name: req.body.name,
-      quantity: req.body.quantity,
-      from: "ShoppingList_" + req.body.name
-    });
-    
-    res.status(201).json({
-      status: 'success',
-      nwIngredient,
-    });
+  const nwIngredient = await Ingredients.create({
+    name: req.body.name,
+    quantity: req.body.quantity,
+    from: 'ShoppingList_' + req.body.name,
+  });
+
+  res.status(201).json({
+    status: 'success',
+    nwIngredient,
+  });
 });
 
 exports.getAllIngredients = catchAsync(async (req, res, next) => {
-  const ingredients = await Ingredients.find({
-    from: {$regex: /^ShoppingList/ }
-  });
+  Ingredients.find(
+    {
+      from: { $regex: /^ShoppingList/ },
+    }.select('-from'),
+    req.query
+  )
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
+
+  const ingredients = await features.query;
 
   res.status(200).json({
     status: 'success',
     requestAt: req.requestTime,
     length: ingredients.length,
     data: {
-        ingredients,
+      ingredients,
     },
   });
 });
-
 
 exports.getIngredientById = catchAsync(async (req, res, next) => {
   const ingredient = await Ingredients.findById(req.params.id);
@@ -54,7 +63,6 @@ exports.getIngredientById = catchAsync(async (req, res, next) => {
     },
   });
 });
-
 
 exports.update = catchAsync(async (req, res, next) => {
   const filteredBody = filterObj(req.body, 'name', 'quantity');
@@ -79,7 +87,6 @@ exports.update = catchAsync(async (req, res, next) => {
     },
   });
 });
-
 
 exports.delete = catchAsync(async (req, res, next) => {
   await Ingredients.findByIdAndDelete(req.params.id);
