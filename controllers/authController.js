@@ -38,16 +38,16 @@ const createSendToken = (user, status, res) => {
   res.status(status).json({
     status: 'success',
     token,
-    userInfo: userObj
+    userInfo: userObj,
   });
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
   const email = req.body.email;
-  const existed = await User.findOne({email}).select('+active');
+  const existed = await User.findOne({ email }).select('+active');
 
   if (existed && existed.active === false) {
-    await User.deleteOne({ email});
+    await User.deleteOne({ email });
   }
 
   const nwUser = await User.create({
@@ -60,7 +60,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     role: req.body.role,
   });
 
-  createSendToken(nwUser, 201, res); 
+  createSendToken(nwUser, 201, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -69,7 +69,9 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!email || !password)
     return next(new AppError(`Please provide your email and password!`, 400));
 
-  const user = await User.findOne({ email }).select('+password active firstName lastName email');
+  const user = await User.findOne({ email }).select(
+    '+password active firstName lastName email'
+  );
 
   if (!user || !(await user.correctPassword(password, user.password)))
     return next(new AppError('incorrect email and password!', 401));
@@ -80,7 +82,7 @@ exports.login = catchAsync(async (req, res, next) => {
 
 exports.logout = catchAsync(async (req, res, next) => {
   res.status(200).json({
-    message: 'Logged out successfully'
+    message: 'Logged out successfully',
   });
 });
 
@@ -88,7 +90,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   // getting token and check if it is exist
   let token;
   if (
-    req.headers.authorization && 
+    req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1];
@@ -135,20 +137,23 @@ exports.forgetPass = catchAsync(async (req, res, next) => {
   // 1) Get user based on POSTed email
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
-    return next(new AppError('There is no user with email address.', 404));
+    return res.status(res.STATUS_CODE.NoContent).send();
   }
 
   // 2) Generate the random reset token
   const resetToken = user.createPasswordResetToken();
+  
+
+  res.cookie('resetToken', resetToken, {
+    expires: new Date(Date.now() + 10 * 60 * 1000),
+    httpOnly: true,
+  });
+
   await user.save({ validateBeforeSave: false });
-
+  console.log(user);
   // 3) Send it to user's email
-  const resetURL = `${req.protocol}://${req.get(
-    'host'
-  )}/api/user/resetPassword/${resetToken}`;
-
-  console.log(resetURL);
-  const message = `Your Mealit password can be reset by clicking the button below. if you did not request a new password, please ignore this email. your reset url ${resetURL}`;
+  const resetURL = `https://mealit01.github.io/website/#/set-new-password`;
+  const message = `Hello, ${user.firstName}!\nYour Mealit password can be reset by clicking the button below. if you did not request a new password, please ignore this email. your reset url ${resetURL}`;
 
   try {
     await sendEmail({
@@ -159,6 +164,7 @@ exports.forgetPass = catchAsync(async (req, res, next) => {
 
     res.status(200).json({
       status: 'success',
+      resetToken,
       message: 'Token sent to your email!',
     });
   } catch (err) {
@@ -172,6 +178,7 @@ exports.forgetPass = catchAsync(async (req, res, next) => {
     );
   }
 });
+
 
 exports.resetPass = catchAsync(async (req, res, next) => {
   console.log(req.params.token);
