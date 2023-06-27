@@ -35,7 +35,7 @@ exports.getAllIngredients = catchAsync(async (req, res, next) => {
   const features = new APIFeatures(
     Ingredients.find({
       from: { $regex: /^Pantry/ },
-    }),
+    }).select('-from'),
     req.query
   )
     .filter()
