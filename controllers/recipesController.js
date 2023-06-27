@@ -4,10 +4,6 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const fs = require('fs');
 
-const recipesToAdd = JSON.parse(
-  fs.readFileSync(`${__dirname}/../data/recipes.json`)
-);
-
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
   Object.keys(obj).forEach((el) => {
@@ -17,17 +13,13 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
+/*
 exports.addRecipes = catchAsync(async (req, res) => {
-  recipesToAdd.forEach((obj) => {
-    Recipes.create({
-      name: obj.name,
-    });
-  });
 
   res.status(200).json({
     status: 'success',
   });
-});
+});*/
 
 exports.getAllRecipes = catchAsync(async (req, res, next) => {
   const features = new APIFeatures(Recipes.find(), req.query)
