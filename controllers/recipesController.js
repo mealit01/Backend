@@ -24,15 +24,20 @@ exports.getAllRecipes = catchAsync(async (req, res, next) => {
     .sort()
     .limitFields()
     .paginate();
-  const recipe = await features.query;
+
+  let recipes = await features.query;
+  recipes = recipes.map((recipe) => {
+    recipe.bookmarkedBy ??= [];
+    recipe.bookmarked = recipe.bookmarkedBy.includes(req.user.id);
+    recipe.bookmarkedBy = undefined;
+    return recipe;
+  });
 
   res.status(200).json({
     status: 'success',
     requestAt: req.requestTime,
-    length: recipe.length,
-    data: {
-      recipe,
-    },
+    length: recipes.length,
+    recipes,
   });
 });
 

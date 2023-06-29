@@ -24,15 +24,35 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.GetAllBookmarkedRecipe = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.user.id, { active: true })
+    .select(
+      '-firstName -lastName -email -username -password -__v -active -_id -createdAt -updatedAt -role'
+    )
+    .populate({
+      path: 'bookmarkedRecipes',
+      select: '-bookmarkedBy -__v',
+    });
+
+  res.status(200).json({
+    status: 'success',
+    requestAt: req.requestTime,
+    length: user.length,
+    user,
+  });
+});
+
 exports.getInfo = catchAsync(async (req, res, next) => {
-  const firstName = req.user.firstName, lastName = req.user.lastName, email = req.user.email;
+  const firstName = req.user.firstName,
+    lastName = req.user.lastName,
+    email = req.user.email;
   res.status(200).json({
     status: 'success',
     token: req.headers.authorization.split(' ')[1],
     data: {
       firstName,
       lastName,
-      email
+      email,
     },
   });
 });
