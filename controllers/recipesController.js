@@ -27,9 +27,14 @@ exports.getAllRecipes = catchAsync(async (req, res, next) => {
 
   let recipes = await features.query;
   recipes = recipes.map((recipe) => {
-    recipe.bookmarkedBy ??= [];
-    recipe.bookmarked = recipe.bookmarkedBy.includes(req.user.id);
-    recipe.bookmarkedBy = undefined;
+    if (req.user) {
+      recipe.bookmarkedBy ??= [];
+      recipe.bookmarked = recipe.bookmarkedBy.includes(req.user.id);
+      recipe.bookmarkedBy = undefined;
+    } else {
+      (recipe.bookmarked = false), (recipe.bookmarkedBy = undefined);
+    }
+
     return recipe;
   });
 
@@ -46,6 +51,14 @@ exports.getRecipeById = catchAsync(async (req, res, next) => {
 
   if (!recipe) {
     return next(new AppError('No recipe found with that ID', 404));
+  }
+
+  if (req.user) {
+    recipe.bookmarkedBy ??= [];
+    recipe.bookmarked = recipe.bookmarkedBy.includes(req.user.id);
+    recipe.bookmarkedBy = undefined;
+  } else {
+    (recipe.bookmarked = false), (recipe.bookmarkedBy = undefined);
   }
 
   res.status(200).json({

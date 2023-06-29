@@ -122,6 +122,32 @@ exports.protect = catchAsync(async (req, res, next) => {
   next();
 });
 
+exports.checkIfUserLoggedIn = catchAsync(async (req, res, next) => {
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  if (!token) return next();
+
+  // verification token
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+  // check if the user is still exist
+  const currUser = await User.findById(decoded.id);
+
+  // Check if user changed password after the token was issued
+  if (!currUser || currUser.changedPasswordAfter(decoded.iat)) {
+    return next();
+  }
+
+  req.user = currUser;
+  next();
+});
+
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role))
