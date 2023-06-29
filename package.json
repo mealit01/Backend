@@ -6,9 +6,9 @@
   "license": "ISC",
   "description": "",
   "scripts": {
-    "dev": "set NODE_ENV=develpoment && nodemon index.js",
-    "start": "set NODE_ENV=production && nodemon index.js",
-    "debug": "nbd index.js"
+    "dev": "set NODE_ENV=develpoment && nodemon server.js",
+    "start": "set NODE_ENV=production && nodemon server.js",
+    "debug": "nbd server.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
