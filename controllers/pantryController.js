@@ -16,13 +16,9 @@ exports.addIngredient = catchAsync(async (req, res) => {
   const nwIngredient = await Ingredients.create({
     name: req.body.name,
     quantity: req.body.quantity,
+    expiryDate: req.body.expiryDate,
+    category: req.body.category,
     from: 'Pantry_' + req.body.name,
-    vegetables: req.body.vegetables,
-    Dairy: req.body.Dairy,
-    Fruits: req.body.Fruits,
-    Grains: req.body.Grains,
-    Protein: req.body.Protein,
-    spice: req.body.spice,
   });
 
   res.status(201).json({
