@@ -2,7 +2,7 @@ const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 dotenv.config({ path: './config.env' });
 
-const Mealit = require('./Mealit');
+const MealitApp  = require('./MealitApp');
 
 const DB = process.env.DATABASE;
 
@@ -19,6 +19,6 @@ mongoose
 const port = 4000 || process.env.PORT;
 
 // Start the Express server
-Mealit.listen(port, () => {
+MealitApp.listen(port, () => {
   console.log(`app running on port: ${port}..`);
 });
