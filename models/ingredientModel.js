@@ -7,35 +7,29 @@ const ingredientsSchema = new mongoose.Schema({
     required: true,
   },
   quantity: {
-    type: Number,
+    type: String,
   },
   expiryDate: {
     type: Date,
   },
   ingredientAddedAt: Date,
-  from:{
+  from: {
     type: String,
     uqique: true,
   },
-  vegetables: Boolean,
-  Dairy: Boolean,
-  Fruits: Boolean,
-  Grains: Boolean,
-  Protein: Boolean,
-  spice : Boolean,
+  category: String,
   createdAt: {
     type: Date,
     default: Date.now(),
-    select: false
+    select: false,
   },
 });
 
-
 ingredientsSchema.pre('save', function (next) {
-    this.ingredientAddedAt = Date.now() - 1000;
-    next();
+  this.ingredientAddedAt = Date.now() - 1000;
+  next();
 });
-  
+
 // Create the Ingredients model
 const Ingredients = mongoose.model('Ingredients', ingredientsSchema);
 module.exports = Ingredients;
