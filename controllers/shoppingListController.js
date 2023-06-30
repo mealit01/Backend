@@ -26,17 +26,16 @@ exports.addIngredient = catchAsync(async (req, res) => {
 });
 
 exports.getAllIngredients = catchAsync(async (req, res, next) => {
-  Ingredients.find(
-    {
+  const features = new APIFeatures(
+    Ingredients.find({
       from: { $regex: /^ShoppingList/ },
-    }.select('-from'),
+    }).select('-from'),
     req.query
   )
     .filter()
     .sort()
     .limitFields()
     .paginate();
-
   const ingredients = await features.query;
 
   res.status(200).json({
