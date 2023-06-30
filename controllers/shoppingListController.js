@@ -49,7 +49,7 @@ exports.getAllIngredients = catchAsync(async (req, res, next) => {
 });
 
 exports.getIngredientById = catchAsync(async (req, res, next) => {
-  const ingredient = await Ingredients.findById(req.params.id);
+  const ingredient = await Ingredients.findById(req.params.id).select('-from');
 
   if (!ingredient) {
     return next(new AppError('No recipe found with that ID', 404));
