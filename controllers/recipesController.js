@@ -34,6 +34,9 @@ exports.getAllRecipes = catchAsync(async (req, res, next) => {
     if (!req.user) {
       recipe.bookmarked = false;
     }
+    else {
+      recipe.bookmarked = req.user.bookmarkedRecipes.includes(recipe._id);
+    }
 
     if (
       !('sort' in req.query && req.query.sort === '-lastVisitedAt') ||
@@ -52,21 +55,6 @@ exports.getAllRecipes = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getHistory = catchAsync(async (req, res, next) => {
-  const user = await User.findById(req.user.id).populate({
-    path: 'lastVisitedAt',
-    select: '-bookmarkedBy -__v',
-  });
-
-  const History = user.lastVisitedAt;
-  res.status(200).json({
-    status: 'success',
-    requestAt: req.requestTime,
-    length: History.length,
-    History,
-  });
-});
-
 exports.getRecipeById = catchAsync(async (req, res, next) => {
   const recipe = await Recipes.findById(req.params.id).select('-bookmarkedBy');
 
@@ -77,6 +65,8 @@ exports.getRecipeById = catchAsync(async (req, res, next) => {
   if (!req.user) {
     recipe.bookmarked = false;
   } else {
+    recipe.bookmarked = req.user.bookmarkedRecipes.includes(recipe._id);
+    
     while (req.user.lastVisitedAt.length >= 6) {
       req.user.lastVisitedAt.shift();
     }
@@ -93,6 +83,21 @@ exports.getRecipeById = catchAsync(async (req, res, next) => {
     data: {
       recipe,
     },
+  });
+});
+
+exports.getHistory = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.user.id).populate({
+    path: 'lastVisitedAt',
+    select: '-bookmarkedBy -__v',
+  });
+
+  const History = user.lastVisitedAt;
+  res.status(200).json({
+    status: 'success',
+    requestAt: req.requestTime,
+    length: History.length,
+    History,
   });
 });
 

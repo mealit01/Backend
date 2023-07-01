@@ -2,6 +2,7 @@ const Ingredients = require('../models/ingredientModel');
 const APIFeatures = require('./../utils/apiFeatures');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const User = require('../models/userModel');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -21,6 +22,12 @@ exports.addIngredient = catchAsync(async (req, res) => {
     from: 'Pantry_' + req.body.name,
   });
 
+  req.user.pantry.addToSet(nwIngredient._id);
+  await User.findByIdAndUpdate(req.user._id, req.user, {
+    new: true,
+    runValidators: true,
+  });
+
   res.status(201).json({
     status: 'success',
     nwIngredient,
@@ -29,24 +36,25 @@ exports.addIngredient = catchAsync(async (req, res) => {
 
 exports.getAllIngredients = catchAsync(async (req, res, next) => {
   const features = new APIFeatures(
-    Ingredients.find({
-      from: { $regex: /^Pantry/ },
-    }).select('-from'),
+    User.findById(req.user.id).populate({
+      path: 'pantry',
+      select: '-from -__v',
+    }),
     req.query
   )
     .filter()
     .sort()
     .limitFields()
     .paginate();
-  const ingredients = await features.query;
+
+  const user = await features.query;
+  const ingredients = user[0].pantry;
 
   res.status(200).json({
     status: 'success',
     requestAt: req.requestTime,
     length: ingredients.length,
-    data: {
-      ingredients,
-    },
+    ingredients,
   });
 });
 
@@ -91,9 +99,13 @@ exports.update = catchAsync(async (req, res, next) => {
 
 exports.delete = catchAsync(async (req, res, next) => {
   await Ingredients.findByIdAndDelete(req.params.id);
+  req.user.pantry.pull(req.params.id);
+  await User.findByIdAndUpdate(req.user._id, req.user, {
+    new: true,
+    runValidators: true,
+  });
 
   res.status(404).json({
     status: 'success',
-    data: '',
   });
 });
