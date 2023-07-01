@@ -27,18 +27,20 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
 exports.GetAllBookmarkedRecipe = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user.id, { active: true })
     .select(
-      '-firstName -lastName -email -username -password -__v -active -_id -createdAt -updatedAt -role'
+      '-firstName -lastName -email -username -password -__v -active -_id -createdAt -updatedAt -role -lastVisitedAt'
     )
     .populate({
       path: 'bookmarkedRecipes',
       select: '-bookmarkedBy -__v',
     });
 
+  const bookmarkedRecipes = user.bookmarkedRecipes;
+
   res.status(200).json({
     status: 'success',
     requestAt: req.requestTime,
-    length: user.length,
-    user,
+    length: bookmarkedRecipes.length,
+    bookmarkedRecipes,
   });
 });
 

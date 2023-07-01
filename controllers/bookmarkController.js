@@ -3,40 +3,6 @@ const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
-const addRecipeToUserBookmarks = catchAsync(async (userID, recipeID) => {
-  const user = await User.findById(userID, { runValidators: true });
-  user.bookmarkedRecipes = user.bookmarkedRecipes || [];
-
-  await User.findByIdAndUpdate(
-    userID,
-    { $addToSet: { bookmarkedRecipes: recipeID } },
-    {
-      new: true,
-      runValidators: true,
-    }
-  );
-});
-
-const addUserToRecipeBookmarks = catchAsync(async (userID, recipeID) => {
-  const recipe = await Recipes.findById(recipeID);
-  recipe.bookmarkedBy.push(userID);
-  await Recipes.findByIdAndUpdate(recipeID, recipe);
-});
-
-const removeRecipeFromUserBookmarks = catchAsync(async (userID, recipeID) => {
-  await User.findByIdAndUpdate(
-    userID,
-    { $pull: { bookmarkedRecipes: recipeID } },
-    { new: true, runValidators: true }
-  );
-});
-
-const removeUserFromRecipeBookmarks = catchAsync(async (userID, recipeID) => {
-  await Recipes.findByIdAndUpdate(recipeID, {
-    $pull: { bookmarkedBy: userID },
-  });
-});
-
 exports.bookmark = catchAsync(async (req, res, next) => {
   const recipe = await Recipes.findById(req.params.id);
 
@@ -44,19 +10,34 @@ exports.bookmark = catchAsync(async (req, res, next) => {
     return next(new AppError('No recipe found with that ID', 404));
   }
 
-  recipe.bookmarkedBy ??= [];
-  const { id: userID } = req.user;
+  const findRecipe = req.user.bookmarkedRecipes.findIndex((el) => {
+    return el.equals(recipe._id);
+  });
 
-  if (!recipe.bookmarkedBy.includes(userID)) {
-    await addUserToRecipeBookmarks(userID, recipe.id);
-    await addRecipeToUserBookmarks(userID, recipe.id);
+  const findUser = recipe.bookmarkedBy.findIndex((el) => {
+    return el.equals(req.user._id);
+  });
+
+  if (findRecipe !== -1 || findUser !== -1) {
+    req.user.bookmarkedRecipes.pull(recipe._id);
+    recipe.bookmarkedBy.pull(req.user._id);
+    recipe.bookmarked = false;
   } else {
-    await removeUserFromRecipeBookmarks(userID, recipe.id);
-    await removeRecipeFromUserBookmarks(userID, recipe.id);
+    req.user.bookmarkedRecipes.addToSet(recipe._id);
+    recipe.bookmarkedBy.addToSet(req.user._id);
+    recipe.bookmarked = true;
   }
+
+  await Promise.all([
+    User.findByIdAndUpdate(req.user._id, req.user, {
+      new: true,
+      runValidators: true,
+    }),
+    recipe.save(),
+  ]);
 
   res.status(200).json({
     status: 'success',
-    mark: !recipe.bookmarkedBy.includes(userID) ? 'marked' : 'unmarked',
+    recipe,
   });
 });

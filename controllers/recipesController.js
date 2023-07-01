@@ -2,6 +2,7 @@ const Recipes = require('../models/recipesModel');
 const APIFeatures = require('./../utils/apiFeatures');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const User = require('../models/userModel');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -19,7 +20,10 @@ exports.addRecipes = catchAsync(async (req, res) => {
 });
 
 exports.getAllRecipes = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(Recipes.find(), req.query)
+  const features = new APIFeatures(
+    Recipes.find().select('-bookmarkedBy'),
+    req.query
+  )
     .filter()
     .sort()
     .limitFields()
@@ -27,15 +31,17 @@ exports.getAllRecipes = catchAsync(async (req, res, next) => {
 
   let recipes = await features.query;
   recipes = recipes.map((recipe) => {
-    if (req.user) {
-      recipe.bookmarkedBy ??= [];
-      recipe.bookmarked = recipe.bookmarkedBy.includes(req.user.id);
-      recipe.bookmarkedBy = undefined;
-    } else {
-      (recipe.bookmarked = false), (recipe.bookmarkedBy = undefined);
+    if (!req.user) {
+      recipe.bookmarked = false;
     }
 
-    return recipe;
+    if (
+      !('sort' in req.query && req.query.sort === '-lastVisitedAt') ||
+      ('sort' in req.query &&
+        req.query.sort === '-lastVisitedAt' &&
+        recipe.lastVisitedAt)
+    )
+      return recipe;
   });
 
   res.status(200).json({
@@ -46,19 +52,40 @@ exports.getAllRecipes = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.getHistory = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.user.id).populate({
+    path: 'lastVisitedAt',
+    select: '-bookmarkedBy -__v',
+  });
+
+  const History = user.lastVisitedAt;
+  res.status(200).json({
+    status: 'success',
+    requestAt: req.requestTime,
+    length: History.length,
+    History,
+  });
+});
+
 exports.getRecipeById = catchAsync(async (req, res, next) => {
-  const recipe = await Recipes.findById(req.params.id);
+  const recipe = await Recipes.findById(req.params.id).select('-bookmarkedBy');
 
   if (!recipe) {
     return next(new AppError('No recipe found with that ID', 404));
   }
 
-  if (req.user) {
-    recipe.bookmarkedBy ??= [];
-    recipe.bookmarked = recipe.bookmarkedBy.includes(req.user.id);
-    recipe.bookmarkedBy = undefined;
+  if (!req.user) {
+    recipe.bookmarked = false;
   } else {
-    (recipe.bookmarked = false), (recipe.bookmarkedBy = undefined);
+    while (req.user.lastVisitedAt.length >= 6) {
+      req.user.lastVisitedAt.shift();
+    }
+
+    req.user.lastVisitedAt.addToSet(recipe._id);
+    await User.findByIdAndUpdate(req.user._id, req.user, {
+      new: true,
+      runValidators: true,
+    });
   }
 
   res.status(200).json({
