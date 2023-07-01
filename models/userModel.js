@@ -60,6 +60,10 @@ const userSchema = new mongoose.Schema({
       ref: 'Recipes',
     },
   ],
+  lastVisitedAt: [{
+    type: mongoose.Schema.ObjectId,
+    ref: 'Recipes',
+  }],
 });
 
 // pre('save', async function (next)): This function hashes the user's password using bcryptjs

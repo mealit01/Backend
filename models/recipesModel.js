@@ -71,6 +71,7 @@ const recipesSchema = new mongoose.Schema({
   },
   bookmarked: {
     type: Boolean,
+    default: false,
   },
   bookmarkedBy: [
     {
