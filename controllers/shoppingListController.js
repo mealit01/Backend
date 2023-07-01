@@ -2,6 +2,7 @@ const Ingredients = require('../models/ingredientModel');
 const catchAsync = require('../utils/catchAsync');
 const APIFeatures = require('./../utils/apiFeatures');
 const AppError = require('../utils/appError');
+const User = require('../models/userModel');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -19,6 +20,12 @@ exports.addIngredient = catchAsync(async (req, res) => {
     from: 'ShoppingList_' + req.body.name,
   });
 
+  req.user.shopping.addToSet(nwIngredient._id);
+  await User.findByIdAndUpdate(req.user._id, req.user, {
+    new: true,
+    runValidators: true,
+  });
+
   res.status(201).json({
     status: 'success',
     nwIngredient,
@@ -27,16 +34,19 @@ exports.addIngredient = catchAsync(async (req, res) => {
 
 exports.getAllIngredients = catchAsync(async (req, res, next) => {
   const features = new APIFeatures(
-    Ingredients.find({
-      from: { $regex: /^ShoppingList/ },
-    }).select('-from'),
+    User.findById(req.user.id).populate({
+      path: 'shopping',
+      select: '-from -__v',
+    }),
     req.query
   )
     .filter()
     .sort()
     .limitFields()
     .paginate();
-  const ingredients = await features.query;
+
+  const user = await features.query;
+  const ingredients = user[0].shopping;
 
   res.status(200).json({
     status: 'success',
@@ -89,9 +99,13 @@ exports.update = catchAsync(async (req, res, next) => {
 
 exports.delete = catchAsync(async (req, res, next) => {
   await Ingredients.findByIdAndDelete(req.params.id);
+  req.user.shopping.pull(req.params.id);
+  await User.findByIdAndUpdate(req.user._id, req.user, {
+    new: true,
+    runValidators: true,
+  });
 
   res.status(404).json({
     status: 'success',
-    data: '',
   });
 });

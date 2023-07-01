@@ -54,7 +54,9 @@ exports.getAllIngredients = catchAsync(async (req, res, next) => {
     status: 'success',
     requestAt: req.requestTime,
     length: ingredients.length,
-    ingredients,
+    data: {
+      ingredients,
+    },
   });
 });
 
