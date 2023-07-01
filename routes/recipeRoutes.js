@@ -9,6 +9,10 @@ router
   .get(authController.checkIfUserLoggedIn, recipesController.getAllRecipes);
 
 router
+  .route(`/getHistory`)
+  .get(authController.protect, recipesController.getHistory);
+
+router
   .route(`/getRecipe/:id`)
   .get(authController.checkIfUserLoggedIn, recipesController.getRecipeById);
 router.patch(`/updateRecipe/:id`, recipesController.update);
