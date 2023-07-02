@@ -6,69 +6,35 @@ const recipesSchema = new mongoose.Schema({
     type: String,
     unique: true,
   },
-  url: {
-    type: String,
-  },
-  category: {
-    type: String,
-  },
-  author: {
-    type: String,
-  },
-  summary: {
-    type: String,
-  },
-  rating: {
-    type: Number,
-  },
-  ingredients: {
-    type: Array,
-  },
-  directions: {
-    type: String,
-  },
-  preparation_time: {
-    type: String,
-  },
-  cooking_time: {
-    type: String,
-  },
-  total_time: {
-    type: String,
-  },
-  servings: {
-    type: Number,
-  },
-  calories: {
-    type: Number,
-  },
-  carbohydrates: {
-    type: Number,
-  },
-  sugars: {
-    type: Number,
-  },
-  fat: {
-    type: Number,
-  },
-  protein: {
-    type: Number,
-  },
-  dietary_fiber: {
-    type: Number,
-  },
-  potassium: {
-    type: Number,
-  },
-  diet_type: {
-    type: Array,
-  },
-  allergens: {
-    type: String,
-  },
-  cuisine: {
-    type: String,
-  },
+  url: String,
+  category: String,
+  author: String,
+  summary: String,
+  rating: Number,
+  review_count: Number,
+  ingredients: Array,
+  directions: Array,
+  preparation_time: String,
+  cooking_time: String,
+  total_time: String,
+  servings: Number,
+  calories: Number,
+  carbohydrates: Number,
+  sugars: Number,
+  fat: Number,
+  cholesterol: Number,
+  protein: Number,
+  dietary_fiber: Number,
+  sodium: Number,
+  calories_from_fat: Number,
+  calcium: Number,
+  iron: Number,
+  magnesium: Number,
+  potassium: Number,
+  vitamin_c: Number,
+  diet_type: Array,
+  allergens: String,
+  cuisine: String,
   bookmarked: {
     type: Boolean,
     default: false,
