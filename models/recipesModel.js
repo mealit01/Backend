@@ -45,6 +45,7 @@ const recipesSchema = new mongoose.Schema({
       ref: 'User',
     },
   ],
+  imageUrl: String,
 });
 
 // Create the Recipes model
