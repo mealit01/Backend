@@ -3,6 +3,7 @@ const APIFeatures = require('./../utils/apiFeatures');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const User = require('../models/userModel');
+const getImageUrl = require('../utils/getImageUrl');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -33,8 +34,7 @@ exports.getAllRecipes = catchAsync(async (req, res, next) => {
   recipes = recipes.map((recipe) => {
     if (!req.user) {
       recipe.bookmarked = false;
-    }
-    else {
+    } else {
       recipe.bookmarked = req.user.bookmarkedRecipes.includes(recipe._id);
     }
 
@@ -66,16 +66,22 @@ exports.getRecipeById = catchAsync(async (req, res, next) => {
     recipe.bookmarked = false;
   } else {
     recipe.bookmarked = req.user.bookmarkedRecipes.includes(recipe._id);
-    
+
     while (req.user.lastVisitedAt.length >= 6) {
       req.user.lastVisitedAt.shift();
     }
 
-    req.user.lastVisitedAt.addToSet(recipe._id);
+    //  req.user.lastVisitedAt.addToSet(recipe._id);
     await User.findByIdAndUpdate(req.user._id, req.user, {
       new: true,
       runValidators: true,
     });
+  }
+
+  if (!recipe.imageUrl) {
+    const imageUrl = await getImageUrl(recipe.url);
+    recipe.imageUrl = imageUrl;
+    await recipe.save();
   }
 
   res.status(200).json({
