@@ -31,11 +31,21 @@ exports.getAllRecipes = catchAsync(async (req, res, next) => {
     .paginate();
 
   let recipes = await features.query;
-  recipes = recipes.map((recipe) => {
+
+  for (let i = 0; i < recipes.length; i++) {
+    const recipe = recipes[i];
+
     if (!req.user) {
       recipe.bookmarked = false;
     } else {
       recipe.bookmarked = req.user.bookmarkedRecipes.includes(recipe._id);
+    }
+
+    console.log(recipe.url);
+    if (!recipe.imageUrl) {
+      const imageUrlPromise = getImageUrl(recipe.url);
+      recipe.imageUrl = await imageUrlPromise;
+      await recipe.save();
     }
 
     if (
@@ -43,13 +53,13 @@ exports.getAllRecipes = catchAsync(async (req, res, next) => {
       ('sort' in req.query &&
         req.query.sort === '-lastVisitedAt' &&
         recipe.lastVisitedAt)
-    )
-      return recipe;
-  });
+    ) {
+      recipes[i] = recipe;
+    }
+  }
 
   res.status(200).json({
     status: 'success',
-    requestAt: req.requestTime,
     length: recipes.length,
     recipes,
   });
@@ -86,9 +96,7 @@ exports.getRecipeById = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    data: {
-      recipe,
-    },
+    recipe,
   });
 });
 
