@@ -19,7 +19,7 @@ exports.addIngredient = catchAsync(async (req, res) => {
     quantity: req.body.quantity,
     expiryDate: req.body.expiryDate,
     category: req.body.category,
-    from: 'Pantry_' + req.body.name,
+    from: 'Pantry_' + req.user.email + '_' + req.body.name,
   });
 
   req.user.pantry.addToSet(nwIngredient._id);
@@ -76,25 +76,31 @@ exports.getIngredientById = catchAsync(async (req, res, next) => {
 });
 
 exports.update = catchAsync(async (req, res, next) => {
-  const filteredBody = filterObj(req.body, 'name', 'quantity');
-
-  const updatedIngredient = await Ingredients.findByIdAndUpdate(
+  const filteredBody = filterObj(
+    req.body,
+    'name',
+    'quantity',
+    'expiryDate',
+    'category'
+  );
+  
+  const ingredient = await Ingredients.findByIdAndUpdate(
     req.params.id,
     filteredBody,
-    {
-      new: true,
-      runValidators: true,
-    }
-  );
+    { new: true, runValidators: true }
+  ).lean();
 
-  if (!updatedIngredient) {
-    return next(new AppError('No recipe found with that ID', 404));
+  if (!ingredient) {
+    return next(new AppError('No ingredient found with that ID', 404));
   }
+
+  ingredient.from = `Pantry_${req.user.email}_${ingredient.name}`;
+  await Ingredients.findByIdAndUpdate(req.params.id, { from: ingredient.from });
 
   res.status(200).json({
     status: 'success',
     data: {
-      updatedIngredient,
+      ingredient,
     },
   });
 });
