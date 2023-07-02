@@ -1,29 +1,31 @@
-const catchAsync = require('../utils/catchAsync');
-const { spawn } = require('child_process');
-const path = require('path');
-
-module.exports.searchEngine = catchAsync(async (req, res, next) => {
-  const childPython = spawn('python3', [
-    path.normalize(`${__dirname}/../project_source.py`),
-  ]);
-  childPython.stdin.write(JSON.stringify(req.body));
-
-  const bestMatch = await new Promise((resolve, reject) => {
-    childPython.stdout.on('data', (data) => {
-      resolve(parsedData);
-    });
-
-    childPython.stderr.on('data', (err) => {
-      reject(new Error(err.toString()));
-    });
-
-    childPython.stderr.on('end', () => {
-      reject(new Error('An error occurred while executing the Python script.'));
-    });
-  });
+exports.getSearchFilters = async (req, res, next) => {
+  const filters = [
+    'preparation_time',
+    'cooking_time',
+    'total_time',
+    'servings',
+    'calories',
+    'carbohydrates',
+    'sugars',
+    'fat',
+    'cholesterol',
+    'protein',
+    'dietary_fiber',
+    'sodium',
+    'calories_from_fat',
+    'calcium',
+    'iron',
+    'magnesium',
+    'potassium',
+    'vitamin_c',
+    'diet_type',
+    'allergens',
+    'cuisine',
+  ];
 
   res.status(200).json({
     status: 'success',
-    data: { bestMatch },
+    length: filters.length,
+    filters,
   });
-});
+};
