@@ -81,7 +81,7 @@ exports.getRecipeById = catchAsync(async (req, res, next) => {
       req.user.lastVisitedAt.shift();
     }
 
-    //  req.user.lastVisitedAt.addToSet(recipe._id);
+    req.user.lastVisitedAt.addToSet(recipe._id);
     await User.findByIdAndUpdate(req.user._id, req.user, {
       new: true,
       runValidators: true,
