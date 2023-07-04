@@ -1,7 +1,7 @@
 const Recipes = require('../models/recipesModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
-const getRes = require('../utils/getRes');
+const searchEngineRes = require('../utils/searchEngineRes');
 const getImageUrl = require('../utils/getImageUrl');
 const fs = require('fs');
 
@@ -18,7 +18,7 @@ exports.getSearchFilters = catchAsync(async (req, res, next) => {
 });
 
 exports.search = catchAsync(async (req, res, next) => {
-  const responseData = await getRes(req.body);
+  const responseData = await searchEngineRes(req.body);
 
   let data = [];
   await Promise.all(
