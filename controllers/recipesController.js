@@ -4,6 +4,7 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const User = require('../models/userModel');
 const getImageUrl = require('../utils/getImageUrl');
+const { bookmark } = require('./bookmarkController');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -66,17 +67,21 @@ exports.getAllRecipes = catchAsync(async (req, res, next) => {
 });
 
 exports.getRecipeById = catchAsync(async (req, res, next) => {
-  const recipe = await Recipes.findById(req.params.id).select('-bookmarkedBy');
+  let recipe = await Recipes.findById(req.params.id).select('-bookmarkedBy');
 
   if (!recipe) {
     return next(new AppError('No recipe found with that ID', 404));
   }
 
+  if (!recipe.imageUrl) {
+    const imageUrl = await getImageUrl(recipe.url);
+    recipe.imageUrl = imageUrl;
+    await recipe.save();
+  }
+
   if (!req.user) {
     recipe.bookmarked = false;
   } else {
-    recipe.bookmarked = req.user.bookmarkedRecipes.includes(recipe._id);
-
     while (req.user.lastVisitedAt.length >= 6) {
       req.user.lastVisitedAt.shift();
     }
@@ -86,12 +91,20 @@ exports.getRecipeById = catchAsync(async (req, res, next) => {
       new: true,
       runValidators: true,
     });
-  }
 
-  if (!recipe.imageUrl) {
-    const imageUrl = await getImageUrl(recipe.url);
-    recipe.imageUrl = imageUrl;
-    await recipe.save();
+    const idx = req.user.bookmarkedRecipes.findIndex((el) => {
+       console.log(el);
+      return el._id.equals(recipe._id);
+    });
+
+    if (idx !== -1) {
+      const user = await User.findById(req.user.id).populate({
+        path: 'bookmarkedRecipes',
+        select: '-bookmarkedBy -__v',
+      });
+
+      recipe = await user.bookmarkedRecipes[idx];
+    }
   }
 
   res.status(200).json({
