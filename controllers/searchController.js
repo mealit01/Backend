@@ -31,10 +31,13 @@ exports.search = catchAsync(async (req, res, next) => {
     })
   );
 
-  const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || 100;
-  const skip = (page - 1) * limit;
-  const paginatedData = data.slice(skip, skip + limit);
+  let paginatedData = data;
+  if (req.query.page && req.query.limit) {
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 100;
+    const skip = (page - 1) * limit;
+    paginatedData = await data.slice(skip, skip + limit);
+  }
 
   res.status(200).json({
     status: 'success',
