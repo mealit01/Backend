@@ -3,6 +3,5 @@ const searchController = require('../controllers/searchController');
 const router = express.Router();
 
 router.get(`/filters`, searchController.getSearchFilters);
-
-//router.post(`/findRecipe`, searchController.searchEngine);
+router.post(`/`, searchController.search);
 module.exports = router;
