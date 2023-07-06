@@ -13,6 +13,7 @@ const userRouter = require('./routes/userRoutes.js'); // User route handler
 const recipeRouter = require('./routes/recipeRoutes'); // Recipe route handler
 const pantryRouter = require('./routes/pantryRoutes'); // pantry route handler
 const shoppingListRouter = require('./routes/shoppingListRoutes'); // shoppingList route handler
+const plannerRouter = require('./routes/plannerRoutes'); // planner route handler
 const searchRouter = require('./routes/searchRoutes'); // shoppingList route handler
 const bookmarkRouter = require('./routes/bookmarkRoutes'); // bookmark route handler
 
@@ -70,6 +71,9 @@ MealitApp.use(`/api/pantry`, pantryRouter);
 
 // Route handler for shopping routes
 MealitApp.use(`/api/shopping`, shoppingListRouter);
+
+// Route handler for planner routes
+MealitApp.use(`/api/planner`, plannerRouter);
 
 MealitApp.use(`/api/recipes/search`, searchRouter);
 
