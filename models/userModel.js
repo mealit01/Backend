@@ -78,6 +78,30 @@ const userSchema = new mongoose.Schema({
       ref: 'Ingredients',
     },
   ],
+  planner: [
+    {
+      day: Number,
+      dayOfWeek: String,
+      breakfast: [
+        {
+          type: mongoose.Schema.ObjectId,
+          ref: 'Recipes',
+        },
+      ],
+      lunch: [
+        {
+          type: mongoose.Schema.ObjectId,
+          ref: 'Recipes',
+        },
+      ],
+      dinner: [
+        {
+          type: mongoose.Schema.ObjectId,
+          ref: 'Recipes',
+        },
+      ],
+    },
+  ],
 });
 
 // pre('save', async function (next)): This function hashes the user's password using bcryptjs
