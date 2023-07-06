@@ -16,7 +16,6 @@ const ingredientsSchema = new mongoose.Schema({
   ingredientAddedAt: Date,
   from: {
     type: String,
-    uqique: true,
   },
   category: String,
   createdAt: {
@@ -27,7 +26,7 @@ const ingredientsSchema = new mongoose.Schema({
 });
 
 ingredientsSchema.pre('save', function (next) {
-  this.ingredientAddedAt = Date.now() - 1000;
+  this.ingredientAddedAt = Date.now() - 1000; // Set 'ingredientAddedAt' to the current date and time minus 1 second
   next();
 });
 

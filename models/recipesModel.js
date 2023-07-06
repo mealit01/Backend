@@ -42,7 +42,7 @@ const recipesSchema = new mongoose.Schema({
   bookmarkedBy: [
     {
       type: mongoose.Schema.ObjectId,
-      ref: 'User',
+      ref: 'User', // Define the recipes schema
     },
   ],
   imageUrl: String,
