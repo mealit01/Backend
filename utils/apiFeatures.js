@@ -4,53 +4,51 @@ class APIFeatures {
     this.queryString = queryString;
   }
 
-  // Filter method to handle basic and advanced filtering
+  // Filter the query based on the provided query string parameters
   filter() {
     const queryObj = { ...this.queryString };
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
 
     // Remove excluded fields from the query object
-    excludedFields.forEach(el => delete queryObj[el]);
+    excludedFields.forEach((el) => delete queryObj[el]);
 
-    // Advanced filtering: Convert query object to string and replace operators
+    // Convert the query object to a string and replace comparison operators with MongoDB operators
     let queryStr = JSON.stringify(queryObj);
-    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
 
-    // Parse the modified query string and update the query object
+    // Update the query with the filtered criteria
     this.query = this.query.find(JSON.parse(queryStr));
 
     return this;
   }
 
-  // Sort method to handle sorting
+  // Sort the query based on the provided sort parameter
   sort() {
     if (this.queryString.sort) {
-      // If a sort query parameter is provided, update the query to sort accordingly
       const sortBy = this.queryString.sort.split(',').join(' ');
       this.query = this.query.sort(sortBy);
     } else {
-      // If no sort parameter is provided, sort by default field '-createdAt'
+      // Default sorting by createdAt field in descending order
       this.query = this.query.sort('-createdAt');
     }
 
     return this;
   }
 
-  // LimitFields method to handle selecting specific fields
+  // Limit the fields to be included in the query result
   limitFields() {
     if (this.queryString.fields) {
-      // If fields parameter is provided, select only those fields
       const fields = this.queryString.fields.split(',').join(' ');
       this.query = this.query.select(fields);
     } else {
-      // If no fields parameter is provided, exclude '__v' field
+      // Exclude the '__v' field by default
       this.query = this.query.select('-__v');
     }
 
     return this;
   }
 
-  // Paginate method to handle pagination
+  // Paginate the query results based on the provided page and limit parameters
   paginate() {
     const page = this.queryString.page * 1 || 1;
     const limit = this.queryString.limit * 1 || 100;
