@@ -40,14 +40,14 @@ MealitApp.use(xss());
 if (process.env.NODE_ENV === 'development') {
   MealitApp.use(morgan('dev'));
 }
-/*
+
 // Rate limiter to limit repeated requests from the same IP
 const limiter = rateLimit({
   max: 100,
   windowMs: 60 * 60 * 1000,
   message: 'Too many requests from this IP, please try again in an hour!',
 });
-*/
+
 // Use the rate limiter middleware for all routes starting with '/api'
 MealitApp.use(`/api`, limiter);
 
