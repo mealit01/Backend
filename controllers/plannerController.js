@@ -62,19 +62,21 @@ exports.getDay = catchAsync(async (req, res) => {
     .populate('planner.breakfast planner.lunch planner.dinner')
     .exec();
 
-  console.log(day);
-
   res.status(200).json({
     status: 'success',
     day: day.planner.find((el) => el.day === req.params.day * 1),
   });
 });
 
-exports.addMeal = catchAsync(async (req, res) => {
+exports.addMeal = catchAsync(async (req, res, next) => {
   const { meal, day, id } = req.params;
-  console.log(meal, day, id);
 
   const planner = req.user.planner.find((el) => el.day === Number(day));
+
+  if (!planner) {
+    return next(new AppError('Day not found', 404));
+  }
+
   planner[meal].addToSet(id);
 
   const updatedUser = await User.findByIdAndUpdate(req.user._id, req.user, {
@@ -94,9 +96,13 @@ exports.addMeal = catchAsync(async (req, res) => {
 
 exports.deleteMeal = catchAsync(async (req, res) => {
   const { meal, day, id } = req.params;
-  console.log(meal, day, id);
 
   const planner = req.user.planner.find((el) => el.day === Number(day));
+
+  if (!planner) {
+    return next(new AppError('Day not found', 404));
+  }
+
   planner[meal].pull(id);
 
   const updatedUser = await User.findByIdAndUpdate(req.user._id, req.user, {
