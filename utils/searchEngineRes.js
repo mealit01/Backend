@@ -15,7 +15,6 @@ async function getRes(body) {
     // Extract the URL values from the response object
     let urls = Object.values(dataAfterRespose.url);
     // Log the URLs to the console
-    console.log(urls);
 
     return urls; // Return the URLs
   } catch (error) {
