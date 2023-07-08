@@ -16,7 +16,7 @@ The backend is responsible for handling server-side logic and API endpoints requ
 
 ## Overview
 
-The backend of your project is built using Node.js, Express.js, and MongoDB, following a RESTful API architecture. Here's an overview of the main technologies used :
+The backend of our project is built using Node.js, Express.js, and MongoDB, following a RESTful API architecture. Here's an overview of the main technologies used :
 
 1. **Node.js**: Node.js is a JavaScript runtime environment that allows you to run JavaScript code on the server-side. It provides an event-driven, non-blocking I/O model, which makes it well-suited for building scalable and efficient applications.
 
