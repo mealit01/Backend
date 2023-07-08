@@ -42,7 +42,7 @@ exports.getAllIngredients = catchAsync(async (req, res, next) => {
 
   let ingredients = user.pantry;
   const category = req.query.category;
-  console.log(category);
+
   if (category) {
     ingredients = user.pantry.filter(
       (ingredient) => ingredient.category === category

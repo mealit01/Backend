@@ -15,12 +15,6 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-exports.addRecipes = catchAsync(async (req, res) => {
-  res.status(200).json({
-    status: 'success',
-  });
-});
-
 exports.getAllRecipes = catchAsync(async (req, res, next) => {
   const features = new APIFeatures(
     Recipes.find().select('-bookmarkedBy'),
@@ -42,7 +36,6 @@ exports.getAllRecipes = catchAsync(async (req, res, next) => {
       recipe.bookmarked = req.user.bookmarkedRecipes.includes(recipe._id);
     }
 
-    console.log(recipe.url);
     if (!recipe.imageUrl) {
       const imageUrlPromise = getImageUrl(recipe.url);
       recipe.imageUrl = await imageUrlPromise;
@@ -93,7 +86,7 @@ exports.getRecipeById = catchAsync(async (req, res, next) => {
     });
 
     const idx = req.user.bookmarkedRecipes.findIndex((el) => {
-       console.log(el);
+      console.log(el);
       return el._id.equals(recipe._id);
     });
 
