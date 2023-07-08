@@ -6,11 +6,11 @@ The backend is responsible for handling server-side logic and API endpoints requ
 
 ## Table of Contents
 
-- [Overview](https://github.com/mealit01/Backend/edit/master/README.md#overview)
-- [Setup](https://github.com/mealit01/Backend/edit/master/README.md#setup)
-- [Project structure](https://github.com/mealit01/Backend/edit/master/README.md#project-structure)
-- [API Endpoints](https://github.com/mealit01/Backend/edit/master/README.md#api-endpoints)
-- [Data Models](https://github.com/mealit01/Backend/edit/master/README.md#data-models)
+- [Overview](#overview)
+- [Setup](#setup)
+- [Project structure](#project-structure)
+- [API Endpoints](#api-endpoints)
+- [Data Models](#data-models)
 
 ---
 
