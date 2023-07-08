@@ -34,14 +34,6 @@ exports.addIngredient = catchAsync(async (req, res) => {
   });
 });
 
-/*
-pantry: [
-  {
-    type: mongoose.Schema.ObjectId,
-    ref: 'Ingredients',
-  },
-],
-*/
 exports.getAllIngredients = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user._id).populate({
     path: 'pantry',
