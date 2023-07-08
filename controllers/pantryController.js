@@ -34,21 +34,28 @@ exports.addIngredient = catchAsync(async (req, res) => {
   });
 });
 
+/*
+pantry: [
+  {
+    type: mongoose.Schema.ObjectId,
+    ref: 'Ingredients',
+  },
+],
+*/
 exports.getAllIngredients = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(
-    User.findById(req.user.id).populate({
-      path: 'pantry',
-      select: '-from -__v',
-    }),
-    req.query
-  )
-    .filter()
-    .sort()
-    .limitFields()
-    .paginate();
+  const user = await User.findById(req.user._id).populate({
+    path: 'pantry',
+    select: '-from -__v',
+  });
 
-  const user = await features.query;
-  const ingredients = user[0].pantry;
+  let ingredients = user.pantry;
+  const category = req.query.category;
+  console.log(category);
+  if (category) {
+    ingredients = user.pantry.filter(
+      (ingredient) => ingredient.category === category
+    );
+  }
 
   res.status(200).json({
     status: 'success',
@@ -83,7 +90,7 @@ exports.update = catchAsync(async (req, res, next) => {
     'expiryDate',
     'category'
   );
-  
+
   const ingredient = await Ingredients.findByIdAndUpdate(
     req.params.id,
     filteredBody,
