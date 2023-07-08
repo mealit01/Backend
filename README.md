@@ -164,7 +164,7 @@ this architecture allows you to handle HTTP requests from the frontend, process 
 
 - **`/api/pantry`** Method: **`GET` :**
   This endpoint is used to retrieve the user's pantry items. It expects a GET request and returns a list of pantry items.
-- **`/api/pantry/ingredient/649fd3e682c0b8498250d617`**Method: **`GET` :**
+- **`/api/pantry/ingredient/649fd3e682c0b8498250d617`** Method: **`GET` :**
   This endpoint is used to retrieve a specific pantry item. It expects a GET request with the item ID and returns the corresponding pantry item.
 - **`/api/pantry/add`** Method: **`POST`:**
   This endpoint is used to add a new pantry item. It expects a POST request with the item details and adds the item to the user's pantry.
@@ -179,7 +179,7 @@ this architecture allows you to handle HTTP requests from the frontend, process 
 
 - **`/api/shopping`** Method: **`GET` :**
   This endpoint is used to retrieve the user's shopping list. It expects a GET request and returns a list of shopping list items.
-- **`/api/shopping/ingredient/649fd3e682c0b8498250d617`**Method: **`GET` :**
+- **`/api/shopping/ingredient/649fd3e682c0b8498250d617`** Method: **`GET` :**
   This endpoint is used to retrieve a specific shopping list item. It expects a GET request with the item ID and returns the corresponding shopping list item.
 - **`/api/shopping/add`** Method: **`POST`:**
   This endpoint is used to add a new item to the shopping list. It expects a POST request with the item details and adds the item to the user's shopping list.
