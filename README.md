@@ -1,8 +1,6 @@
 # mealit/Backend
 
-This repository contains the backend code for a web application developed by Mealit.
-
-The backend is responsible for handling server-side logic and API endpoints required for the application to function.
+This repository contains the backend code for our graduation project (Mealit).
 
 ## Table of Contents
 
@@ -70,12 +68,19 @@ To set up the backend repository locally, follow these steps:
      JWT_COOKIE_EXPIRES_IN = 90
 
      // for reset pasword mails
-     EMAIL_HOST =
-     EMAIL_PORT =
-     EMAIL_USERNAME =
-     EMAIL_PASSWORD =
+     EMAIL_HOST = Email_Host_here
+     EMAIL_PORT = Email_Port_here
+     EMAIL_USERNAME = Email_Username_here
+     EMAIL_PASSWORD = Email_Password_here
 
      ```
+
+---
+
+5. In the project directory, you can run:
+   ```
+   npm start
+   ```
 
 ---
 
@@ -87,7 +92,7 @@ To set up the backend repository locally, follow these steps:
 
 - **middlewares**: Middlewares are functions that intercept incoming requests or outgoing responses. They can perform various tasks, such as authentication, request validation, error handling, logging, etc. The middlewares directory contains these functions that can be applied to specific routes or globally to the entire application.
 
-- **models**: Models represent the application's data structure and provide an interface for interacting with the database. They define the schema and methods for querying, inserting, updating, and deleting data. In your case, the models directory contains the Mongoose models that map to the MongoDB collections.
+- **models**: Models represent the application's data structure and provide an interface for interacting with the database. They define the schema and methods for querying, inserting, updating, and deleting data.
 
 - **routes**: Routes define the endpoints and the corresponding handlers in the application. They specify the URL paths, HTTP methods, and the functions (controllers) to be executed when a request is made to a specific endpoint. The routes directory contains these route definitions.
 
@@ -380,7 +385,7 @@ const recipesSchema = new mongoose.Schema({
   bookmarkedBy: [
     {
       type: mongoose.Schema.ObjectId,
-      ref: 'User', // Define the recipes schema
+      ref: 'User',
     },
   ],
   imageUrl: String,
