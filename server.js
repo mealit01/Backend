@@ -17,15 +17,11 @@ mongoose
   })
   .then(() => console.log('DB connection sucsessful!'));
 
-const options = {
-  key: fs.readFileSync('SSL/key.pem'), // Read the private key file
-  cert: fs.readFileSync('SSL/cert.pem'), // Read the certificate file
-};
 
 // Set the port
 const port = 4000 || process.env.PORT;
 
 // Start the Express server
-https.createServer(options, MealitApp).listen(port, () => {
-  console.log(`App running on port: ${port} with SSL enabled.`);
+MealitApp.listen(port, () => {
+  console.log(`app running on port: ${port}..`);
 });
